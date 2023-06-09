@@ -3,7 +3,12 @@ import GoldMedal from "../assets/GoldMedal.png";
 import SilverMedal from "../assets/SilverMedal.png";
 import BronzeMedal from "../assets/BronzeMedal.png";
 
-const ResultScreen = ({ elapsedTime, correctAnswerCount, onReplay }) => {
+const ResultScreen = ({
+  elapsedTime,
+  correctAnswerCount,
+  onReplay,
+  onQuit,
+}) => {
   const [result, setResult] = useState();
 
   const testResults = [
@@ -58,12 +63,20 @@ const ResultScreen = ({ elapsedTime, correctAnswerCount, onReplay }) => {
       <span className="text-[#087F5B] drop-shadow-lg text-lg tracking-wide font-semibold">
         {correctAnswerCount}/10 correct answers in {elapsedTime} minutes
       </span>
-      <button
-        onClick={onReplay}
-        className="px-6 active:scale-105 py-1.5 text-lg rounded-full ring-2 ring-gray-950 font-bold text-white mt-8 bg-[#087F5B] hover:bg-[#0ca678] hover:ring-4 hover:ring-[#087F5B] transition duration-100 hover:border-0"
-      >
-        Play Again
-      </button>
+      <div className="flex gap-4">
+        <button
+          onClick={onQuit}
+          className="px-6 active:scale-105 py-1.5 text-lg text-white rounded-full ring-2 ring-gray-950 font-bold mt-8 bg-red-500 hover:bg-red-400 hover:ring-4 hover:ring-red-500 transition duration-100 hover:border-0"
+        >
+          Exit
+        </button>
+        <button
+          onClick={onReplay}
+          className="px-6 active:scale-105 py-1.5 text-lg rounded-full ring-2 ring-gray-950 font-bold text-white mt-8 bg-[#087F5B] hover:bg-[#0ca678] hover:ring-4 hover:ring-[#087F5B] transition duration-100 hover:border-0"
+        >
+          Play Again!
+        </button>
+      </div>
     </div>
   );
 };
