@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { FaTimes } from "react-icons/fa";
+import { SiCodereview } from "react-icons/si";
 import GoldMedal from "../assets/GoldMedal.png";
 import SilverMedal from "../assets/SilverMedal.png";
 import BronzeMedal from "../assets/BronzeMedal.png";
@@ -10,6 +12,7 @@ const ResultScreen = ({
   startTest,
   onReplay,
   onQuit,
+  onReview,
 }) => {
   const [result, setResult] = useState();
 
@@ -41,7 +44,7 @@ const ResultScreen = ({
     }
   }, [correctAnswerCount]);
 
-  const handleExit = () => {
+  const handleQuit = () => {
     onQuit();
     setCorrectAnswerCount(0);
   };
@@ -52,8 +55,18 @@ const ResultScreen = ({
     setCorrectAnswerCount(0);
   };
 
+  const handleReview = () => {
+    onReview();
+  };
+
   return (
     <div className="flex flex-col justify-center items-center h-full w-max-2xl">
+      <span
+        className="absolute top-12 right-12 hover:scale-110 duration-100 text-lg cursor-pointer hover:text-[#087F5B]"
+        onClick={handleQuit}
+      >
+        <FaTimes />
+      </span>
       {result && (
         <>
           <img src={result.medal} alt="quiz-logo" className="w-32 rounded-lg" />
@@ -78,16 +91,17 @@ const ResultScreen = ({
       </span>
       <div className="flex gap-4">
         <button
-          onClick={handleExit}
-          className="px-6 active:scale-105 py-1.5 text-lg text-white rounded-full ring-2 ring-gray-950 font-bold mt-8 bg-red-500 hover:bg-red-400 hover:ring-4 hover:ring-red-500 transition duration-100 hover:border-0"
-        >
-          Exit
-        </button>
-        <button
           onClick={handleReplay}
           className="px-6 active:scale-105 py-1.5 text-lg rounded-full ring-2 ring-gray-950 font-bold text-white mt-8 bg-[#087F5B] hover:bg-[#0ca678] hover:ring-4 hover:ring-[#087F5B] transition duration-100 hover:border-0"
         >
           Play Again!
+        </button>
+        <button
+          onClick={handleReview}
+          className="px-6 flex items-center active:scale-105 py-1.5 text-lg rounded-full ring-2 ring-[#0ca678] font-bold mt-8 text-[#0ca678] hover:ring-4 hover:ring-[#087F5B] transition duration-100 hover:border-0"
+        >
+          <SiCodereview className="mr-2" />
+          Review
         </button>
       </div>
     </div>

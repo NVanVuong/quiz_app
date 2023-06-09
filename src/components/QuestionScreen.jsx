@@ -1,26 +1,30 @@
 import { useEffect, useState } from "react";
-import { FaTimes, FaCheckCircle, FaRegTimesCircle } from "react-icons/fa";
+import { FaTimes, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import quizApi from "../api/quizApi";
 import Loading from "./Loading";
 
 const QuestionScreen = ({
+  questions,
+  setQuestions,
   finishTest,
   onQuit,
   onFinish,
   setCorrectAnswerCount,
+  selectedAnswers,
+  setSelectedAnswers,
 }) => {
-  const [questions, setQuestions] = useState([]);
   const [questionIndex, setQuestionIndex] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [isChoiced, setIsChoiced] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
-  const [correct, setCorrect] = useState();
+  const [isCorrect, setIsCorrect] = useState();
 
   useEffect(() => {
     getQuestions();
   }, []);
 
   const currentQuestion = questions[questionIndex];
+  const isLastQuestion = questionIndex === questions.length - 1;
 
   const getQuestions = async () => {
     const response = await quizApi.getAll();
@@ -50,24 +54,25 @@ const QuestionScreen = ({
   };
 
   const onSelect = (answer) => {
-    setSelectedAnswer(answer);
+    const newSelectedAnswers = [...selectedAnswers];
+    newSelectedAnswers[questionIndex] = answer;
+    setSelectedAnswers(newSelectedAnswers);
+    setIsChoiced(true);
   };
 
   const onNext = () => {
     setQuestionIndex((prev) => prev + 1);
     setIsChecked(false);
-    setSelectedAnswer("");
-    setCorrect();
+    setIsChoiced(false);
+    setIsCorrect();
   };
 
   const onCheck = () => {
-    if (selectedAnswer === currentQuestion.correct_answer) {
-      console.log("True");
-      setCorrect(true);
+    if (selectedAnswers[questionIndex] === currentQuestion.correct_answer) {
+      setIsCorrect(true);
       setCorrectAnswerCount((prev) => prev + 1);
     } else {
-      console.log("False");
-      setCorrect(false);
+      setIsCorrect(false);
     }
     setIsChecked(true);
   };
@@ -81,7 +86,7 @@ const QuestionScreen = ({
     <div className="flex flex-col items-center h-full justify-center">
       <div className="text-center py-16 px-12 h-full max-w-lg w-full">
         <span
-          className="block float-right text-lg cursor-pointer hover:text-[#087F5B]"
+          className="block absolute top-12 right-12 hover:scale-110 duration-100  text-lg cursor-pointer hover:text-[#087F5B]"
           onClick={onQuit}
         >
           <FaTimes />
@@ -94,69 +99,83 @@ const QuestionScreen = ({
           {currentQuestion.question}
         </p>
         <ul className={`${isChecked && "pointer-events-none"} my-8 h-60`}>
-          {currentQuestion.answers.map((answer, index) => (
-            <li
-              onClick={() => onSelect(answer)}
-              className={`text-left w-full py-2 px-4 border-2 border-[#087f58] rounded-full mb-4 hover:ring-4 focus:ring-4 hover:ring-[#63e6be] transition duration-200 ${
-                selectedAnswer === answer ? "ring-4 ring-[#63e6be]" : ""
-              }`}
-              key={index}
-            >
-              <span className="flex justify-between items-center">
-                {answer}
-                <input
-                  type="checkbox"
-                  className="text-[#087f58] rounded-full"
-                  checked={selectedAnswer === answer}
-                  onChange={() => setSelectedAnswer(answer)}
-                />
-              </span>
-            </li>
-          ))}
+          {currentQuestion.answers.map((answer, index) => {
+            const isSelected = selectedAnswers[questionIndex] === answer;
+            const isCorrectAnswer = answer === currentQuestion.correct_answer;
+            const isUserAnswerWrong = isChecked && isSelected && !isCorrect;
+
+            const liClassName = `text-left w-full py-2 px-4 border-2 border-[#087f58] rounded-full mb-4 hover:ring-4 focus:ring-4 hover:ring-[#63e6be] transition ${
+              isSelected ? "ring-4 ring-[#63e6be]" : ""
+            } ${
+              isUserAnswerWrong ? "ring-4 ring-red-300 border-red-500" : ""
+            } ${isChecked && isCorrectAnswer ? "ring-4 ring-[#63e6be]" : ""}`;
+
+            const inputClassName = `text-[#087f58] rounded-full ${
+              isChecked && isUserAnswerWrong ? "text-red-500" : ""
+            } ${isChecked && isCorrectAnswer ? "text-[#087f58]" : ""}`;
+
+            const isCheckedAnswer = isChecked ? isCorrectAnswer : isSelected;
+
+            return (
+              <li
+                onClick={() => onSelect(answer)}
+                className={liClassName}
+                key={index}
+              >
+                <span className="flex justify-between items-center">
+                  {answer}
+                  <input
+                    type="checkbox"
+                    className={inputClassName}
+                    checked={isCheckedAnswer}
+                    onChange={() => {}}
+                  />
+                </span>
+              </li>
+            );
+          })}
         </ul>
         <div
-          className={`${!isChecked ? "invisible" : "visible"} ${
-            correct ? "bg-green-200" : "bg-red-200"
-          } z-10 p-3 rounded-lg h-20 min-h-fit flex flex-col font-bold  items-center justify-center`}
+          className={`${!isChecked ? "bg-transparent" : "bg-gray-200"} ${
+            isCorrect ? "text-[#087F5B]" : "text-red-500"
+          } z-20 pt-4 rounded-t-2xl w-full px-12 absolute bottom-0 left-0 right-0`}
         >
-          {correct ? (
-            <span className="flex items-center text-lg text-[#087F5B]">
-              <FaCheckCircle className="mr-4" /> Correct
-            </span>
-          ) : (
-            <span className="flex items-center text-lg text-red-500">
-              <FaRegTimesCircle className="mr-4" /> Incorrect
-            </span>
-          )}
-          <span
+          {isChecked ? (
+            <div className={`rounded-lg h-20 min-h-fit font-extrabold`}>
+              {isCorrect ? (
+                <span className="flex mb-1 items-center text-lg">
+                  <FaCheckCircle className="mr-2" /> Correct
+                </span>
+              ) : (
+                <span className="flex mb-1 items-center text-lg">
+                  <FaTimesCircle className="mr-2" /> Incorrect
+                </span>
+              )}
+              <span className={` text-left mb-1 font-bold block`}>
+                Correct answer:
+              </span>
+              <span className={` text-left block font-medium`}>
+                {currentQuestion.correct_answer}
+              </span>
+            </div>
+          ) : null}
+          <button
             className={`${
-              correct && "hidden"
-            } text-red-500 font-semibold block`}
+              isChoiced ? "bg-[#087F5B]" : "bg-gray-400 pointer-events-none"
+            } ${
+              isChecked && isCorrect
+                ? "bg-[#087F5B]"
+                : isChecked
+                ? "bg-red-500 hover:bg-red-400 hover:ring-red-500"
+                : ""
+            }  w-full active:scale-105 mb-6 mt-5 px-6 py-2 rounded-xl tracking-wider uppercase font-bold text-white hover:bg-[#0ca678] hover:ring-4 hover:ring-[#087F5B] transition duration-300`}
+            onClick={
+              !isChecked ? onCheck : isLastQuestion ? handleFinish : onNext
+            }
           >
-            Correct answer:{" "}
-            <span className="font-bold">{currentQuestion.correct_answer}</span>
-          </span>
+            {!isChecked ? "Check" : isLastQuestion ? "Finish" : "Next"}
+          </button>
         </div>
-        <button
-          className={`${
-            selectedAnswer !== ""
-              ? "bg-[#087F5B]"
-              : "bg-gray-400 pointer-events-none"
-          } w-full active:scale-105 px-6 py-2 rounded-full tracking-wider uppercase font-bold text-white mt-8 hover:bg-[#0ca678] hover:ring-4 hover:ring-[#087F5B] transition duration-300`}
-          onClick={
-            !isChecked
-              ? onCheck
-              : questionIndex + 1 === questions.length
-              ? handleFinish
-              : onNext
-          }
-        >
-          {!isChecked
-            ? "Check"
-            : questionIndex + 1 === questions.length
-            ? "Finish"
-            : "Next"}
-        </button>
       </div>
     </div>
   ) : (

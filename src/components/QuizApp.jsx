@@ -2,13 +2,16 @@ import { useState, useEffect } from "react";
 import StartScreen from "./StartScreen";
 import QuestionScreen from "./QuestionScreen";
 import ResultScreen from "./ResultScreen";
+import ReviewScreen from "./ReviewScreen";
 
 const QuizApp = () => {
   const [quizState, setQuizState] = useState("start");
+  const [questions, setQuestions] = useState([]);
   const [correctAnswerCount, setCorrectAnswerCount] = useState(0);
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
   const [elapsedTime, setElapsedTime] = useState(0);
+  const [selectedAnswers, setSelectedAnswers] = useState([]);
 
   const formatTime = (time) => {
     const minutes = Math.floor(time / 60);
@@ -53,10 +56,14 @@ const QuizApp = () => {
       case "question":
         return (
           <QuestionScreen
+            questions={questions}
+            setQuestions={setQuestions}
             finishTest={finishTest}
             onQuit={() => handleQuizStateChange("start")}
             onFinish={() => handleQuizStateChange("result")}
             setCorrectAnswerCount={setCorrectAnswerCount}
+            selectedAnswers={selectedAnswers}
+            setSelectedAnswers={setSelectedAnswers}
           />
         );
       case "result":
@@ -68,6 +75,16 @@ const QuizApp = () => {
             setCorrectAnswerCount={setCorrectAnswerCount}
             onQuit={() => handleQuizStateChange("start")}
             onReplay={() => handleQuizStateChange("question")}
+            onReview={() => handleQuizStateChange("review")}
+          />
+        );
+      case "review":
+        return (
+          <ReviewScreen
+            questions={questions}
+            selectedAnswers={selectedAnswers}
+            onQuit={() => handleQuizStateChange("start")}
+            onFinish={() => handleQuizStateChange("result")}
           />
         );
       default:
