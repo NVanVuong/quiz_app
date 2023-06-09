@@ -84,57 +84,61 @@ const QuestionScreen = ({
 
   return !isLoading ? (
     <div className="flex flex-col items-center h-full justify-center">
-      <div className="text-center py-16 px-12 h-full max-w-lg w-full">
-        <span
-          className="block absolute top-12 right-12 hover:scale-110 duration-100  text-lg cursor-pointer hover:text-[#087F5B]"
-          onClick={onQuit}
-        >
-          <FaTimes />
-        </span>
-        <span className="block mt-6 text-[#087F5B] text-lg font-bold">
-          Question {questionIndex + 1}
-          <span className="text-sm font-medium">/{questions.length}</span>{" "}
-        </span>
-        <p className="mt-6 h-16 flex items-center justify-center">
-          {currentQuestion.question}
-        </p>
-        <ul className={`${isChecked && "pointer-events-none"} my-8 h-60`}>
-          {currentQuestion.answers.map((answer, index) => {
-            const isSelected = selectedAnswers[questionIndex] === answer;
-            const isCorrectAnswer = answer === currentQuestion.correct_answer;
-            const isUserAnswerWrong = isChecked && isSelected && !isCorrect;
+      <div className="relative text-center h-full max-w-md w-2/5">
+        <div className="pt-16 px-12">
+          <span
+            className="block absolute top-12 right-12 hover:scale-110 duration-100  text-lg cursor-pointer hover:text-[#087F5B]"
+            onClick={onQuit}
+          >
+            <FaTimes />
+          </span>
+          <span className="block mt-6 text-[#087F5B] text-lg font-bold">
+            Question {questionIndex + 1}
+            <span className="text-sm font-medium">
+              /{questions.length}
+            </span>{" "}
+          </span>
+          <p className="mt-6 h-16 flex items-center justify-center">
+            {currentQuestion.question}
+          </p>
+          <ul className={`${isChecked && "pointer-events-none"} my-8 h-60`}>
+            {currentQuestion.answers.map((answer, index) => {
+              const isSelected = selectedAnswers[questionIndex] === answer;
+              const isCorrectAnswer = answer === currentQuestion.correct_answer;
+              const isUserAnswerWrong = isChecked && isSelected && !isCorrect;
 
-            const liClassName = `text-left w-full py-2 px-4 border-2 border-[#087f58] rounded-full mb-4 hover:ring-4 focus:ring-4 hover:ring-[#63e6be] transition ${
-              isSelected ? "ring-4 ring-[#63e6be]" : ""
-            } ${
-              isUserAnswerWrong ? "ring-4 ring-red-300 border-red-500" : ""
-            } ${isChecked && isCorrectAnswer ? "ring-4 ring-[#63e6be]" : ""}`;
+              const liClassName = `text-left w-full py-2 px-4 border-2 border-[#087f58] rounded-full mb-4 hover:ring-4 focus:ring-4 hover:ring-[#63e6be] transition ${
+                isSelected ? "ring-4 ring-[#63e6be]" : ""
+              } ${
+                isUserAnswerWrong ? "ring-4 ring-red-300 border-red-500" : ""
+              } ${isChecked && isCorrectAnswer ? "ring-4 ring-[#63e6be]" : ""}`;
 
-            const inputClassName = `text-[#087f58] rounded-full ${
-              isChecked && isUserAnswerWrong ? "text-red-500" : ""
-            } ${isChecked && isCorrectAnswer ? "text-[#087f58]" : ""}`;
+              const inputClassName = `text-[#087f58] rounded-full ${
+                isChecked && isUserAnswerWrong ? "text-red-500" : ""
+              } ${isChecked && isCorrectAnswer ? "text-[#087f58]" : ""}`;
 
-            const isCheckedAnswer = isChecked ? isCorrectAnswer : isSelected;
+              const isCheckedAnswer = isChecked ? isCorrectAnswer : isSelected;
 
-            return (
-              <li
-                onClick={() => onSelect(answer)}
-                className={liClassName}
-                key={index}
-              >
-                <span className="flex justify-between items-center">
-                  {answer}
-                  <input
-                    type="checkbox"
-                    className={inputClassName}
-                    checked={isCheckedAnswer}
-                    onChange={() => {}}
-                  />
-                </span>
-              </li>
-            );
-          })}
-        </ul>
+              return (
+                <li
+                  onClick={() => onSelect(answer)}
+                  className={liClassName}
+                  key={index}
+                >
+                  <span className="flex justify-between items-center">
+                    {answer}
+                    <input
+                      type="checkbox"
+                      className={inputClassName}
+                      checked={isCheckedAnswer}
+                      onChange={() => {}}
+                    />
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
         <div
           className={`${!isChecked ? "bg-transparent" : "bg-gray-200"} ${
             isCorrect ? "text-[#087F5B]" : "text-red-500"
