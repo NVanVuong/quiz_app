@@ -62,8 +62,10 @@ const QuizApp = () => {
       case "result":
         return (
           <ResultScreen
+            startTest={startTest}
             elapsedTime={elapsedTime}
             correctAnswerCount={correctAnswerCount}
+            setCorrectAnswerCount={setCorrectAnswerCount}
             onQuit={() => handleQuizStateChange("start")}
             onReplay={() => handleQuizStateChange("question")}
           />

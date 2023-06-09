@@ -6,6 +6,8 @@ import BronzeMedal from "../assets/BronzeMedal.png";
 const ResultScreen = ({
   elapsedTime,
   correctAnswerCount,
+  setCorrectAnswerCount,
+  startTest,
   onReplay,
   onQuit,
 }) => {
@@ -39,6 +41,17 @@ const ResultScreen = ({
     }
   }, [correctAnswerCount]);
 
+  const handleExit = () => {
+    onQuit();
+    setCorrectAnswerCount(0);
+  };
+
+  const handleReplay = () => {
+    startTest();
+    onReplay();
+    setCorrectAnswerCount(0);
+  };
+
   return (
     <div className="flex flex-col justify-center items-center h-full w-max-2xl">
       {result && (
@@ -65,13 +78,13 @@ const ResultScreen = ({
       </span>
       <div className="flex gap-4">
         <button
-          onClick={onQuit}
+          onClick={handleExit}
           className="px-6 active:scale-105 py-1.5 text-lg text-white rounded-full ring-2 ring-gray-950 font-bold mt-8 bg-red-500 hover:bg-red-400 hover:ring-4 hover:ring-red-500 transition duration-100 hover:border-0"
         >
           Exit
         </button>
         <button
-          onClick={onReplay}
+          onClick={handleReplay}
           className="px-6 active:scale-105 py-1.5 text-lg rounded-full ring-2 ring-gray-950 font-bold text-white mt-8 bg-[#087F5B] hover:bg-[#0ca678] hover:ring-4 hover:ring-[#087F5B] transition duration-100 hover:border-0"
         >
           Play Again!
