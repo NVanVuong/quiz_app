@@ -64,7 +64,8 @@ const QuizApp = () => {
           <ResultScreen
             elapsedTime={elapsedTime}
             correctAnswerCount={correctAnswerCount}
-            onReplay={() => handleQuizStateChange("start")}
+            onQuit={() => handleQuizStateChange("start")}
+            onReplay={() => handleQuizStateChange("question")}
           />
         );
       default:
