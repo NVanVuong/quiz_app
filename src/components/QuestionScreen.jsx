@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { FaTimes, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import quizApi from "../api/quizApi";
 import Loading from "./Loading";
@@ -18,6 +18,7 @@ const QuestionScreen = ({
   const [isChoiced, setIsChoiced] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [isCorrect, setIsCorrect] = useState();
+  const buttonRef = useRef(null);
 
   useEffect(() => {
     getQuestions();
@@ -65,6 +66,7 @@ const QuestionScreen = ({
     setIsChecked(false);
     setIsChoiced(false);
     setIsCorrect();
+    buttonRef.current.blur();
   };
 
   const onCheck = () => {
@@ -164,15 +166,16 @@ const QuestionScreen = ({
             </div>
           ) : null}
           <button
+            ref={buttonRef}
             className={`${
               isChoiced ? "bg-[#087F5B]" : "bg-gray-400 pointer-events-none"
             } ${
               isChecked && isCorrect
-                ? "bg-[#087F5B]"
+                ? "bg-[#087F5B] hover:bg-[#0ca678] hover:ring-4 hover:ring-[#087F5B]"
                 : isChecked
-                ? "bg-red-500 hover:bg-red-400 hover:ring-red-500"
+                ? "bg-red-500 hover:bg-red-400 hover:ring-4 hover:ring-red-500"
                 : ""
-            }  w-full active:scale-105 mb-6 mt-5 px-6 py-2 rounded-xl tracking-wider uppercase font-bold text-white hover:bg-[#0ca678] hover:ring-4 hover:ring-[#087F5B] transition duration-300`}
+            }  w-full active:scale-105 mb-6 mt-5 px-6 py-2 rounded-xl tracking-wider uppercase font-bold text-white transition duration-300`}
             onClick={
               !isChecked ? onCheck : isLastQuestion ? handleFinish : onNext
             }
