@@ -84,7 +84,7 @@ const QuestionScreen = ({
 
   return !isLoading ? (
     <div className="flex flex-col items-center h-full justify-center">
-      <div className="relative text-center h-full max-w-md w-2/5">
+      <div className="relative text-center h-full max-w-md w-full md:w-2/5">
         <div className="pt-16 px-12">
           <span
             className="block absolute top-12 right-12 hover:scale-110 duration-100  text-lg cursor-pointer hover:text-[#087F5B]"
